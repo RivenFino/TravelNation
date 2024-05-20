@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_nation/first_page.dart';
-import 'main/dashboard.dart';
+import 'inputPage/Destination.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         useMaterial3: true,
       ),
-      home: FirstPage(),
+      home: Destination(),
     );
   }
 }

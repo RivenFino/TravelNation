@@ -39,7 +39,8 @@ class _MainPageState extends State<MainPage> {
                 Color.fromRGBO(45, 130, 190, 0.45),
                 Color.fromRGBO(65, 150, 235, 0),
               ],
-            )),
+            )
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
