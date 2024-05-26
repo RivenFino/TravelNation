@@ -57,7 +57,7 @@ class _MainPageState extends State<MainPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: SvgPicture.asset(
-                          "assets/images/TravelNation_SVGLogo.svg",
+                          "assets/images/TravelNationLogoBlue.svg",
                           semanticsLabel: 'TravelNation Logo',
                           width: 80,
                         ),

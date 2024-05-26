@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travel_nation/splashscreen/1page.dart';
+import 'package:Travelnation/splashscreen/1page.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {

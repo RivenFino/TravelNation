@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travel_nation/first_page.dart';
+import 'package:Travelnation/first_page.dart';
 import 'inputPage/Destination.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:travel_nation/main/dashboard.dart';
+import 'package:Travelnation/main/dashboard.dart';
 
 class LandingPage3 extends StatefulWidget {
   LandingPage3({super.key});
