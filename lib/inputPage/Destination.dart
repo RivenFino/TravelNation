@@ -263,47 +263,7 @@ class _DestinationData extends State<DestinationPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color.fromRGBO(255, 255, 255, 0.5),
-          leading: GestureDetector(
-            onTapDown: (_) {
-              setState(() {
-                isPressed = true;
-              });
-            },
-            onTapUp: (_) {
-              setState(() {
-                isPressed = false;
-              });
-            },
-            onTapCancel: () {
-              setState(() {
-                isPressed = false;
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 6, 0, 6),
-              child: AnimatedSwitcher(
-                duration: Duration(
-                    milliseconds:
-                        300), // Menggunakan milliseconds untuk animasi yang lebih terlihat
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                child: isPressed
-                    ? SvgPicture.asset(
-                        "assets/images/BackClicked.svg", // SVG yang ditampilkan saat tombol ditekan
-                        key: ValueKey("clicked"),
-                        width: 40,
-                        height: 40,
-                      )
-                    : SvgPicture.asset(
-                        "assets/images/Back.svg", // SVG awal
-                        key: ValueKey('default'),
-                        height: 40,
-                        width: 40,
-                      ),
-              ),
-            ),
-          ),
+          leading: BackAnimate(),
           title: Padding(
             padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
             child: Row(
@@ -328,152 +288,218 @@ class _DestinationData extends State<DestinationPage> {
           ),
         ),
         body: ListView(
-          children: [
-            Container(
-              //SearchBar
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-              child: TextFormField(
-                decoration: InputDecoration(
-                    labelText: 'Search Destination',
-                    labelStyle: TextStyle(
-                        color: Color.fromRGBO(0, 0, 0, 1), fontSize: 14),
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromRGBO(0, 0, 0, 0.1),
-                          width: 2.0,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(12))),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Color.fromRGBO(0, 0, 0, 0.3),
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(12))),
-                    suffixIcon: IconButton(
-                      onPressed: () {},
-                      icon: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: SvgPicture.asset(
-                          "assets/images/icon-search.svg",
-                          width: 24,
-                          height: 24,
-                        ),
-                      ),
-                    )),
-              ),
-            ),
+          children: const [
+            SearchBar(),
             Padding(
               //Destination Data Cards
-              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+              padding: EdgeInsets.symmetric(vertical: 2, horizontal: 12),
               child: Column(
                 children: [
-                  Container(
-                    //Card Element
-                    padding: EdgeInsets.all(4),
-                    height: 90,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Color.fromRGBO(0, 0, 0, 0.1),
-                        )),
+                  CardItems()
+                ],
+              ),
+            ),
+          ],
+        ));
+  }
+
+  GestureDetector BackAnimate() {
+    return GestureDetector(
+          onTapDown: (_) {
+            setState(() {
+              isPressed = true;
+            });
+          },
+          onTapUp: (_) {
+            setState(() {
+              isPressed = false;
+            });
+          },
+          onTapCancel: () {
+            setState(() {
+              isPressed = false;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 6, 0, 6),
+            child: AnimatedSwitcher(
+              duration: const Duration(
+                  milliseconds:
+                      300), // Menggunakan milliseconds untuk animasi yang lebih terlihat
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: isPressed
+                  ? SvgPicture.asset(
+                      "assets/images/BackClicked.svg", // SVG yang ditampilkan saat tombol ditekan
+                      key: ValueKey("clicked"),
+                      width: 40,
+                      height: 40,
+                    )
+                  : SvgPicture.asset(
+                      "assets/images/Back.svg", // SVG awal
+                      key: ValueKey('default'),
+                      height: 40,
+                      width: 40,
+                    ),
+            ),
+          ),
+        );
+  }
+}
+
+class CardItems extends StatelessWidget {
+  const CardItems({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //Card Element
+      padding: EdgeInsets.all(4),
+      height: 90,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Color.fromRGBO(0, 0, 0, 0.1),
+          )),
+      child: Row(
+        children: [
+          ////Left
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Color.fromRGBO(0, 0, 0, 0.1),
+                )),
+            width: 80,
+            height: 80,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: Image.asset(
+                "assets/images/background.jpg",
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          //// Mid
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 6),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Tour Tittle",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Expanded(
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
                       children: [
-                        ////Left
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Color.fromRGBO(0, 0, 0, 0.1),
-                              )),
-                          width: 80,
-                          height: 80,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: Image.asset(
-                              "assets/images/background.jpg",
-                              fit: BoxFit.cover,
-                            ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 3, horizontal: 4),
+                          child: Icon(
+                            FontAwesomeIcons.locationDot,
+                            size: 15,
+                            color:
+                                Color.fromRGBO(107, 107, 107, 1),
                           ),
                         ),
-                        //// Mid
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6),
-                            child: const Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Tour Tittle",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 4),
-                                        child: Icon(
-                                          FontAwesomeIcons.locationDot,
-                                          size: 15,
-                                          color:
-                                              Color.fromRGBO(107, 107, 107, 1),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          "Tour Location; city, province",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 11),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 3,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                        Flexible(
+                          child: Text(
+                            "Tour Location; city, province",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 11),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
                           ),
-                        ),
-                        ////Right
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {},
-                              icon: SvgPicture.asset(
-                                "assets/images/icon-edit.svg",
-                                width: 30,
-                                height: 30,
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: SvgPicture.asset(
-                                "assets/images/icon-delete.svg",
-                                width: 30,
-                                height: 30,
-                              ),
-                            ),
-                          ],
-                        ),
+                        )
                       ],
                     ),
                   )
                 ],
               ),
             ),
-          ],
-        ));
+          ),
+          ////Right
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {},
+                icon: SvgPicture.asset(
+                  "assets/images/icon-edit.svg",
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: SvgPicture.asset(
+                  "assets/images/icon-delete.svg",
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SearchBar extends StatelessWidget {
+  const SearchBar({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //SearchBar
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      child: TextFormField(
+        decoration: InputDecoration(
+            labelText: 'Search Destination',
+            labelStyle: const TextStyle(
+                color: Color.fromRGBO(0, 0, 0, 1), fontSize: 14),
+            enabledBorder: const OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Color.fromRGBO(0, 0, 0, 0.1),
+                  width: 2.0,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            focusedBorder: const OutlineInputBorder(
+                borderSide: BorderSide(
+                  color: Color.fromRGBO(0, 0, 0, 0.3),
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(12))),
+            suffixIcon: IconButton(
+              onPressed: () {},
+              icon: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: SvgPicture.asset(
+                  "assets/images/icon-search.svg",
+                  width: 24,
+                  height: 24,
+                ),
+              ),
+            )),
+      ),
+    );
   }
 }
