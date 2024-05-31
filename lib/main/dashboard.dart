@@ -1,30 +1,152 @@
+import 'package:Travelnation/inputPage/Destination.dart';
+import 'package:Travelnation/utils/card_items.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+
+void main() {
+  runApp(MainTravelNationApp(initialPageIndex: 0));
+}
 
 class MainTravelNationApp extends StatelessWidget {
-  MainTravelNationApp({super.key});
+  final int initialPageIndex;
+  MainTravelNationApp({Key? key, required this.initialPageIndex}) : super(key: key);
 
+
+  @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: '',
-      home: MainPage(),
+      home: MainPage(initialPageIndex: initialPageIndex),
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      routes: {
+        '/dashboard': (context) => MainPage(initialPageIndex: 0),
+        '/profile': (context) => MainPage(initialPageIndex: 1),
+        '/bookmark': (context) => MainPage(initialPageIndex: 2),
+        '/destination': (context) => Destination(),
+      },
     );
   }
 }
 
+
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  int initialPageIndex;
+  MainPage({Key? key, required this.initialPageIndex}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    DashboardPage(),
+    UserSettings(),
+    BookmarkPage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (_currentIndex) {
+      case 0:
+        break;
+      case 1:
+        break;
+      case 2:
+        break;
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _pages[_currentIndex],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset("assets/images/usercircle.svg"),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FontAwesomeIcons.bookmark),
+            label: 'Bookmark',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BookmarkPage extends StatefulWidget {
+  const BookmarkPage({super.key});
+
+  @override
+  State<BookmarkPage> createState() => _BookmarkPage();
+}
+
+class _BookmarkPage extends State<BookmarkPage> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+
+    );
+  }
+}
+
+class UserSettings extends StatefulWidget {
+  const UserSettings({super.key});
+
+  @override
+  State<UserSettings> createState() => _UserSettings();
+}
+
+class _UserSettings extends State<UserSettings> {
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/destination');
+          },
+          child: Text('Go to Destination Page'),
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPage();
+}
+
+class _DashboardPage extends State<DashboardPage> {
+  Widget build(BuildContext context) {
+    
     return Scaffold(
       body: ListView(
         children: [
@@ -39,8 +161,7 @@ class _MainPageState extends State<MainPage> {
                 Color.fromRGBO(45, 130, 190, 0.45),
                 Color.fromRGBO(65, 150, 235, 0),
               ],
-            )
-            ),
+            )),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -54,14 +175,6 @@ class _MainPageState extends State<MainPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SvgPicture.asset(
-                          "assets/images/TravelNationLogoBlue.svg",
-                          semanticsLabel: 'TravelNation Logo',
-                          width: 80,
-                        ),
-                      ),
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
@@ -85,7 +198,16 @@ class _MainPageState extends State<MainPage> {
                             ],
                           ),
                         ),
-                      )
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SvgPicture.asset(
+                          "assets/images/TravelNationLogoBlue.svg",
+                          semanticsLabel: 'TravelNation Logo',
+                          color: Colors.white,
+                          width: 80,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -111,65 +233,49 @@ class _MainPageState extends State<MainPage> {
                     ),
                   ),
                 ),
+
                 Container(
-                    child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 12, 18, 0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    width: double.infinity,
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Search Your Destination",
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal, fontSize: 12),
+                  //SearchBar
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        labelText: 'Search Destination',
+                        labelStyle: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, 1), fontSize: 14),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(0, 0, 0, 0.1),
+                              width: 2.0,
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12))),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Color.fromRGBO(0, 0, 0, 0.3),
+                              width: 2,
+                            ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(12))),
+                        suffixIcon: IconButton(
+                          onPressed: () {},
+                          icon: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: SvgPicture.asset(
+                              "assets/images/icon-search.svg",
+                              width: 24,
+                              height: 24,
+                            ),
                           ),
-                          Icon(FontAwesomeIcons.search),
-                        ],
-                      ),
-                    ),
+                        )),
                   ),
-                )),
+                ),
               ],
             ),
           )
         ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 16),
-          child: NavigationBar(
-            indicatorColor: Colors.white30,
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            destinations: <Widget>[
-              NavigationDestination(
-                  icon: Icon(FontAwesomeIcons.home), label: 'Home'),
-              NavigationDestination(
-                  icon: SvgPicture.asset(
-                    'assets/images/usercircle.svg',
-                    width: 25,
-                    height: 25,
-                  ),
-                  label: 'Username'),
-              NavigationDestination(
-                  icon: Icon(FontAwesomeIcons.bookmark), label: 'Bookmark'),
-            ],
-          ),
-        ),
-      ),
+      )
     );
   }
 }

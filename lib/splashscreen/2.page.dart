@@ -76,10 +76,7 @@ class _MyHomePageState extends State<LandingPage2> {
                 ),
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LandingPage3()),
-                );
+                Navigator.pushNamed(context, "/page3");
               },
               child: Padding(
                 padding: const EdgeInsets.all(6.0),

@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:Travelnation/splashscreen/1page.dart';
+import 'package:Travelnation/splashscreen/2.page.dart';
+import 'package:Travelnation/splashscreen/3page.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
@@ -18,19 +20,37 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Montserrat',
         useMaterial3: true,
       ),
+      initialRoute: "/first",
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class FirstPage extends StatefulWidget {
-  const FirstPage({super.key});
 
-  @override
-  State<FirstPage> createState() => _FirstPageState();
+class Page1 extends StatelessWidget{
+  @override 
+  Widget build(BuildContext context) {
+   return LandingPage1();
+  }
+}
+class Page2 extends StatelessWidget{
+  @override 
+  Widget build(BuildContext context) {
+   return LandingPage2();
+  }
 }
 
-class _FirstPageState extends State<FirstPage> {
+class Page3 extends StatelessWidget{
+  @override 
+  Widget build(BuildContext context) {
+   return LandingPage3();
+  }
+}
+
+
+
+class FirstPage extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,11 +91,12 @@ class _FirstPageState extends State<FirstPage> {
               child: Padding(
                 padding: EdgeInsets.only(top: 70, bottom: 50),
                 child: Container(
-                    child: SvgPicture.asset(
-                  "assets/images/TravelNation_SVGLogo.svg",
-                  semanticsLabel: 'TravelNation Logo',
-                  width: 200,
-                )),
+                  child: SvgPicture.asset(
+                    "assets/images/TravelNation_SVGLogo.svg",
+                    semanticsLabel: 'TravelNation Logo',
+                    width: 200,
+                  ),
+                ),
               ),
             ),
             Container(
@@ -113,11 +134,7 @@ class _FirstPageState extends State<FirstPage> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LandingPage1()),
-                          );
+                          Navigator.pushNamed(context, "/page1");
                         },
                         style: ButtonStyle(
                           backgroundColor:

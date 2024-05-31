@@ -79,7 +79,7 @@ class _MyHomePageState extends State<LandingPage3> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MainTravelNationApp()),
+                      builder: (context) => MainTravelNationApp(initialPageIndex: 1)),
                 );
               },
               child: Container(

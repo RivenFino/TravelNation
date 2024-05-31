@@ -1,3 +1,6 @@
+import 'package:Travelnation/splashscreen/1page.dart';
+import 'package:Travelnation/splashscreen/2.page.dart';
+import 'package:Travelnation/splashscreen/3page.dart';
 import 'package:flutter/material.dart';
 import 'package:Travelnation/first_page.dart';
 import 'inputPage/Destination.dart';
@@ -17,8 +20,16 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Montserrat',
+        useMaterial3: true,
       ),
-      home: Destination(),
+      routes: {
+        "/first" :(context) => Destination(),
+        "/page1" :(context) => Page1(),
+        "/page2" :(context) => Page2(),
+        "/page3" :(context) => Page3(),
+        "/destination" :(context) => Destination(),
+      },
+      home: FirstPage(),
     );
   }
 }
