@@ -123,16 +123,77 @@ class _UserSettings extends State<UserSettings> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
-      ),
-      body: Center(
-        child: ElevatedButton(
+        title: Text('Profile', style: TextStyle(
+                color: Colors.white,
+              ),),
+
+        backgroundColor: Color.fromRGBO(20, 80, 140, 1),
+        leading: IconButton(
+          icon: SvgPicture.asset(
+                    'assets/images/Back.svg',
+                    fit: BoxFit.cover),
           onPressed: () {
-            Navigator.pushNamed(context, '/destination');
-          },
-          child: Text('Go to Destination Page'),
-        ),
+            Navigator.pop(context);
+          },),
+          actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: SvgPicture.asset(
+                  'assets/images/TravelNation_SVGLogo.svg',
+                  fit: BoxFit.contain,
+                  height: 32, // Sesuaikan tinggi logo jika perlu
+                ),
+              ),
+            ],
       ),
+      
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  
+                  width: 100,
+                  
+                  height: 100,
+                  child: SvgPicture.asset(
+                    'assets/images/usercircle.svg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                
+                SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Username',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'User123@gmail.com',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                     
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      )
     );
   }
 }
