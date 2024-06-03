@@ -23,7 +23,7 @@ class DBHelper {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE destinations(id INTEGER PRIMARY KEY AUTOINCREMENT, destinationName TEXT, location TEXT, description TEXT, imagePath TEXT)",
+          "CREATE TABLE destinations(id INTEGER PRIMARY KEY AUTOINCREMENT, destination TEXT, location TEXT, description TEXT, imagePath TEXT)",
         );
       },
     );
