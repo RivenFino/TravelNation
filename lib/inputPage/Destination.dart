@@ -89,82 +89,183 @@ class _DestinationData extends State<DestinationPage> {
 
     showModalBottomSheet(
         context: context,
-        elevation: 9,
-        builder: (_) => Padding(
-              padding: const EdgeInsets.fromLTRB(20, 40, 20, 50),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      controller: _destinationController,
-                      decoration:
-                          const InputDecoration(labelText: 'Destination'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter Destination Name';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _locationController,
-                      decoration: const InputDecoration(labelText: 'Location'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter Location';
-                        }
-                        return null;
-                      },
-                    ),
-                    TextFormField(
-                      controller: _descriptionController,
-                      decoration:
-                          const InputDecoration(labelText: 'Description'),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Enter Description';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    _image == null
-                        ? TextButton.icon(
-                            icon: const Icon(Icons.image),
-                            label: const Text('Pick Destination Image'),
-                            onPressed: _pickImage,
-                          )
-                        : Column(
-                            children: [
-                              Image.file(_image!, height: 100, width: 100),
-                              TextButton.icon(
-                                icon: const Icon(Icons.image),
-                                label: const Text('Change Destination Image'),
-                                onPressed: _pickImage,
+        elevation: 2,
+        builder: (BuildContext context) {
+          return Container(
+            height: 600,
+            padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      _image == null
+                          ? TextButton.icon(
+                              icon: const Icon(Icons.image),
+                              label: const Text('Pick Image'),
+                              onPressed: _pickImage,
+                            )
+                          : Container(
+                            width: double.infinity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 120,
+                                    child: Image.file(_image!, height: 80, width: 80, fit: BoxFit.cover,),
+                                  ),
+                                  TextButton.icon(
+                                    icon: const Icon(Icons.image),
+                                    label: const Text('Change Image'),
+                                    onPressed: _pickImage,
+                                  ),
+                                ],
                               ),
-                            ],
                           ),
-                    const SizedBox(height: 40),
-                    ElevatedButton(
-                      child: Text(id == null ? 'Create' : 'Update'),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          if (id == null) {
-                            _addDestinations();
-                          } else {
-                            _updateDestinations(id);
+                      const SizedBox(height: 10),
+                      Text(
+                        "Destination Name",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 12),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      TextFormField(
+                        controller: _destinationController,
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(fontWeight: FontWeight.w300),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(64, 151, 232, 0.5),
+                                width: 2.0,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                                width: 2,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Destination Name';
                           }
-
-                          Navigator.of(context).pop();
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "location",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 12),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      TextFormField(
+                        controller: _locationController,
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(fontWeight: FontWeight.w300),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(64, 151, 232, 0.5),
+                                width: 2.0,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                                width: 2,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Location';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Description",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 12),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      TextFormField(
+                        controller: _descriptionController,
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(fontWeight: FontWeight.w300),
+                          enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(64, 151, 232, 0.5),
+                                width: 2.0,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                          focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                                width: 2,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter Description';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    child: Text(id == null ? 'Create' : 'Update'),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        if (id == null) {
+                          _addDestinations();
+                        } else {
+                          _updateDestinations(id);
                         }
-                      },
-                    )
-                  ],
-                ),
+
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
+                ],
               ),
-            ));
+            ),
+          );
+        });
   }
 
   Future<void> _addDestinations() async {
@@ -308,119 +409,123 @@ class _DestinationData extends State<DestinationPage> {
             ),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.start, 
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: [ ..._destinations.map((destination) {
-            return  Padding(
-            //Destination Data Cards
-            padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-            child: Container(
-                //Card Element
-                padding: EdgeInsets.all(4),
-                height: 90,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Color.fromRGBO(0, 0, 0, 0.1),
-                    )),
-                child: Row(
-                  children: [
-                    ////Left
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Color.fromRGBO(0, 0, 0, 0.1),
-                          )),
-                      width: 80,
-                      height: 80,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: destination['imagePath'] != null
-                            ? Image.file(
-                                File(destination['imagePath']),
-                                fit: BoxFit.cover,
-                              )
-                            : const Icon(Icons.person, size: 50),
-                      ),
-                    ),
-                    //// Mid
-                    Expanded(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 6),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              destination['destination'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 3, horizontal: 4),
-                                    child: Icon(
-                                      FontAwesomeIcons.locationDot,
-                                      size: 15,
-                                      color: Color.fromRGBO(107, 107, 107, 1),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      destination['location'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 11),
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 3,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    ////Right
-                    Row(
+            children: [
+              ..._destinations.map((destination) {
+                return Padding(
+                  //Destination Data Cards
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
+                  child: Container(
+                    //Card Element
+                    padding: EdgeInsets.all(4),
+                    height: 90,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Color.fromRGBO(0, 0, 0, 0.1),
+                        )),
+                    child: Row(
                       children: [
-                        IconButton(
-                          onPressed: () =>
-                              _showForm(destination['id']),
-                          icon: SvgPicture.asset(
-                            "assets/images/icon-edit.svg",
-                            width: 30,
-                            height: 30,
+                        ////Left
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Color.fromRGBO(0, 0, 0, 0.1),
+                              )),
+                          width: 80,
+                          height: 80,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: destination['imagePath'] != null
+                                ? Image.file(
+                                    File(destination['imagePath']),
+                                    fit: BoxFit.cover,
+                                  )
+                                : const Icon(Icons.person, size: 50),
                           ),
                         ),
-                        IconButton(
-                          onPressed: () =>
-                              _deleteDestinations(destination['id']),
-                          icon: SvgPicture.asset(
-                            "assets/images/icon-delete.svg",
-                            width: 30,
-                            height: 30,
+                        //// Mid
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  destination['destination'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 3, horizontal: 4),
+                                        child: Icon(
+                                          FontAwesomeIcons.locationDot,
+                                          size: 15,
+                                          color:
+                                              Color.fromRGBO(107, 107, 107, 1),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                          destination['location'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 11),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 3,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
+                        ),
+                        ////Right
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () => _showForm(destination['id']),
+                              icon: SvgPicture.asset(
+                                "assets/images/icon-edit.svg",
+                                width: 30,
+                                height: 30,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () =>
+                                  _deleteDestinations(destination['id']),
+                              icon: SvgPicture.asset(
+                                "assets/images/icon-delete.svg",
+                                width: 30,
+                                height: 30,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          }),
-          ],
+                  ),
+                );
+              }),
+            ],
           )
         ],
       ),
