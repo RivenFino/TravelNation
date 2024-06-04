@@ -29,7 +29,7 @@ class MainTravelNationApp extends StatelessWidget {
       routes: {
         '/dashboard': (context) => MainPage(initialPageIndex: 0),
         '/profile': (context) => MainPage(initialPageIndex: 1),
-        '/bookmark': (context) => MainPage(initialPageIndex: 2),
+        '/bookmark': (context) => BookmarkPage(),
         '/destination': (context) => Destination(),
       },
     );
@@ -64,6 +64,7 @@ class _MainPageState extends State<MainPage> {
       case 1:
         break;
       case 2:
+        Navigator.pushNamed(context, '/bookmark');
         break;
     }
   }
@@ -105,9 +106,87 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPage extends State<BookmarkPage> {
+    bool isPressed = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+            appBar: AppBar(
+        backgroundColor: Color.fromRGBO(20, 80, 140, 1),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      MainTravelNationApp(initialPageIndex: 1)),
+            ); // Navigasi kembali ke halaman sebelumnya saat tombol ditekan
+          },
+          onTapDown: (_) {
+            setState(() {
+              isPressed = true;
+            });
+          },
+          onTapUp: (_) {
+            setState(() {
+              isPressed = false;
+            });
+          },
+          onTapCancel: () {
+            setState(() {
+              isPressed = false;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 6, 0, 6),
+            child: AnimatedSwitcher(
+              duration: Duration(
+                  milliseconds:
+                      300), // Menggunakan milliseconds untuk animasi yang lebih terlihat
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: isPressed
+                  ? SvgPicture.asset(
+                      "assets/images/BackClicked.svg", // SVG yang ditampilkan saat tombol ditekan
+                      key: ValueKey("clicked"),
+                      width: 40,
+                      height: 40,
+                    )
+                  : SvgPicture.asset(
+                      "assets/images/Back.svg", // SVG awal
+                      key: ValueKey('default'),
+                      height: 40,
+                      width: 40,
+                    ),
+            ),
+          ),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 6, 18, 6),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Bookmark",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SvgPicture.asset(
+                "assets/images/TravelNation_SVGLogo.svg",
+                semanticsLabel: 'TravelNation Logo',
+                width: 80,
+                color: Colors.white,
+              )
+            ],
+          ),
+        ),
+      ),
+
+    );
   }
 }
 
@@ -132,17 +211,17 @@ class _UserSettings extends State<UserSettings> {
           backgroundColor: Color.fromRGBO(20, 80, 140, 1),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: SvgPicture.asset(
-                'assets/images/TravelNation_SVGLogo.svg',
-                fit: BoxFit.contain,
-                height: 32, // Sesuaikan tinggi logo jika perlu
-              ),
-            ),
+                padding: const EdgeInsets.fromLTRB(0, 6, 34, 6),
+                child: SvgPicture.asset(
+                  "assets/images/TravelNation_SVGLogo.svg",
+                  semanticsLabel: 'TravelNation Logo',
+                  width: 80,
+                  color: Colors.white,
+                )),
           ],
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
           child: Column(
             children: [
               Row(
@@ -185,32 +264,76 @@ class _UserSettings extends State<UserSettings> {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Column(
                   children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Color.fromRGBO(248, 248, 248, 1)),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(
+                                color: const Color.fromRGBO(0, 0, 0, 0.05),
+                                width: 1.5
+                                ),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/destination');
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          height: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Text(
+                              'Destination Data',
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(64, 151, 232, 1)),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/destination');
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        alignment: Alignment.center,
-                        height: 60,
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Text(
-                            'Destination Data',
-                            style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: Color.fromRGBO(64, 151, 232, 1)),
-                            textAlign: TextAlign.center,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Color.fromRGBO(248, 248, 248, 1)),
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(
+                                color: const Color.fromRGBO(0, 0, 0, 0.05),
+                                width: 1.5
+                                ),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/bookmark');
+                        },
+                        child: Container(
+                          width: double.infinity,
+                          alignment: Alignment.center,
+                          height: 60,
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Text(
+                              'Bookmark',
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(64, 151, 232, 1)),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
@@ -238,9 +361,20 @@ class _DashboardPage extends State<DashboardPage> {
   TextEditingController _searchInputController = TextEditingController();
   var list = [];
   var filteredList = [];
+  final _searchController = TextEditingController();
   bool doItJustOnce = false;
 
   @override
+  Future<void> _searchDestination(String searchTerm) async {
+    final data = await dbHelper.searchDestination(searchTerm);
+    if (searchTerm == null || searchTerm.isEmpty) {
+      _refreshDestinations();
+    }
+    setState(() {
+      _destinations = data;
+    });
+  }
+
   void _filterList(value) {
     setState(() {
       filteredList = list
@@ -356,12 +490,16 @@ class _DashboardPage extends State<DashboardPage> {
                       //SearchBar
                       padding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                      child: TextFormField(
-                        controller: _searchInputController,
+                      child: TextField(
+                        onSubmitted: (searchTerm) =>
+                            _searchDestination(searchTerm),
+                        controller: _searchController,
                         decoration: InputDecoration(
                             filled: true,
                             fillColor: Colors.white,
-                            labelText: 'Search Destination',
+                            labelText: 'Search the Destination',
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 24),
                             labelStyle: TextStyle(
                                 color: Color.fromRGBO(0, 0, 0, 1),
                                 fontSize: 14),
@@ -371,18 +509,20 @@ class _DashboardPage extends State<DashboardPage> {
                                   width: 2.0,
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(12))),
+                                    BorderRadius.all(Radius.circular(18))),
                             focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
                                   color: Color.fromRGBO(0, 0, 0, 0.3),
                                   width: 2,
                                 ),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(12))),
+                                    BorderRadius.all(Radius.circular(18))),
                             suffixIcon: IconButton(
-                              onPressed: () {},
+                              onPressed: () =>
+                                  _searchDestination(_searchController.text),
                               icon: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: SvgPicture.asset(
                                   "assets/images/icon-search.svg",
                                   width: 24,
@@ -395,6 +535,7 @@ class _DashboardPage extends State<DashboardPage> {
                   ],
                 ),
               ),
+              //Car Slide Horizontal
               Column(
                 children: [
                   Padding(
@@ -427,12 +568,13 @@ class _DashboardPage extends State<DashboardPage> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     height: 220,
                     child: ListView(
-                      scrollDirection: Axis.horizontal,  
+                      scrollDirection: Axis.horizontal,
                       children: [
                         ..._destinations.take(4).map((destination) {
                           return Padding(
                             padding: EdgeInsets.fromLTRB(0, 0, 12, 0),
                             child: Container(
+                              alignment: Alignment.bottomCenter,
                               width: 200,
                               height: 200,
                               decoration: BoxDecoration(
@@ -447,8 +589,80 @@ class _DashboardPage extends State<DashboardPage> {
                                                 as ImageProvider,
                                         fit: BoxFit.cover,
                                       )
-                                    : null,
+                                    : DecorationImage(
+                                        image: AssetImage(
+                                            "assets/images/TravelNationLogo.png"),
+                                        fit: BoxFit.contain,
+                                      ),
                                 borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 10),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color.fromRGBO(240, 240, 240, 0.7),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 4, horizontal: 8),
+                                            child: Container(
+                                              width: 90,
+                                              child: Flexible(
+                                                child: Text(
+                                                  destination['destination'],
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 2,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 12,
+                                          )
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 14),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: const Color.fromRGBO(
+                                                64, 151, 232, 1),
+                                          ),
+                                          child: Text(
+                                            "Route",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           );
@@ -492,7 +706,7 @@ class _DashboardPage extends State<DashboardPage> {
                         return Padding(
                           //Destination Data Cards
                           padding: const EdgeInsets.symmetric(
-                              vertical: 2, horizontal: 12),
+                              vertical: 6, horizontal: 12),
                           child: Container(
                             //Card Element
                             padding: EdgeInsets.all(4),
@@ -583,6 +797,25 @@ class _DashboardPage extends State<DashboardPage> {
                                   ),
                                 ),
                                 ////Right
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 14),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color:
+                                          const Color.fromRGBO(64, 151, 232, 1),
+                                    ),
+                                    child: Text(
+                                      "Route",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),

@@ -17,7 +17,7 @@ class DBHelper {
   }
 
   Future<Database> _initDB() async {
-    String path = join(await getDatabasesPath(), 'travelnation4.db');
+    String path = join(await getDatabasesPath(), 'travelnation100.db');
     return await openDatabase(
       path,
       version: 1,
@@ -27,6 +27,11 @@ class DBHelper {
         );
       },
     );
+  }
+
+    Future<List<Map<String, dynamic>>> searchDestination(String search) async {
+    final db = await database;
+    return await db.query('destinations', where: 'destination LIKE ?', whereArgs: ['%$search%']);
   }
 
   Future<int> insertDestination(Map<String, dynamic> row) async {
