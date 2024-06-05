@@ -45,6 +45,7 @@ class _DestinationData extends State<DestinationPage> {
   final _locationController = TextEditingController();
   final _descriptionController = TextEditingController();
   File? _image;
+  final _searchController = TextEditingController();
   List<Map<String, dynamic>> _destinations = [];
 
   @override
@@ -68,6 +69,44 @@ class _DestinationData extends State<DestinationPage> {
         _image = File(pickedFile.path);
       });
     }
+  }
+
+  Future<void> _searchDestination(String searchTerm) async {
+    final data = await dbHelper.searchDestination(searchTerm);
+    if (searchTerm == null || searchTerm.isEmpty){
+      _refreshDestinations();
+    }
+    setState(() {
+      _destinations = data;
+    });
+  }
+
+  Future<void> _addDestinations() async {
+    await dbHelper.insertDestination({
+      'destination': _destinationController.text,
+      'location': _locationController.text,
+      'description': _descriptionController.text,
+      'imagePath': _image?.path,
+    });
+    _refreshDestinations();
+  }
+
+  Future<void> _updateDestinations(int id) async {
+    await dbHelper.updateDestination({
+      'id': id,
+      'destination': _destinationController.text,
+      'location': _locationController.text,
+      'description': _descriptionController.text,
+      'imagePath': _image?.path,
+    });
+    _refreshDestinations();
+  }
+
+  void _deleteDestinations(int id) async {
+    await dbHelper.deleteDestination(id);
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Destination deleted')));
+    _refreshDestinations();
   }
 
   void _showForm(int? id) {
@@ -100,7 +139,7 @@ class _DestinationData extends State<DestinationPage> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       _image == null
@@ -110,14 +149,19 @@ class _DestinationData extends State<DestinationPage> {
                               onPressed: _pickImage,
                             )
                           : Container(
-                            width: double.infinity,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              width: double.infinity,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
                                     width: 120,
-                                    child: Image.file(_image!, height: 80, width: 80, fit: BoxFit.cover,),
+                                    child: Image.file(
+                                      _image!,
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                   TextButton.icon(
                                     icon: const Icon(Icons.image),
@@ -126,41 +170,48 @@ class _DestinationData extends State<DestinationPage> {
                                   ),
                                 ],
                               ),
-                          ),
+                            ),
                       const SizedBox(height: 10),
-                      Text(
-                        "Destination Name",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 12),
-                      ),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      TextFormField(
-                        controller: _destinationController,
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(fontWeight: FontWeight.w300),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color.fromRGBO(64, 151, 232, 0.5),
-                                width: 2.0,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12))),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color.fromRGBO(0, 0, 0, 0.3),
-                                width: 2,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(12))),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Enter Destination Name';
-                          }
-                          return null;
-                        },
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Destination Name",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 12),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          TextFormField(
+                            controller: _destinationController,
+                            decoration: InputDecoration(
+                              labelStyle:
+                                  TextStyle(fontWeight: FontWeight.w300),
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromRGBO(64, 151, 232, 0.5),
+                                    width: 2.0,
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12))),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color.fromRGBO(0, 0, 0, 0.3),
+                                    width: 2,
+                                  ),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(12))),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Enter Destination Name';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -268,34 +319,6 @@ class _DestinationData extends State<DestinationPage> {
         });
   }
 
-  Future<void> _addDestinations() async {
-    await dbHelper.insertDestination({
-      'destination': _destinationController.text,
-      'location': _locationController.text,
-      'description': _descriptionController.text,
-      'imagePath': _image?.path,
-    });
-    _refreshDestinations();
-  }
-
-  Future<void> _updateDestinations(int id) async {
-    await dbHelper.updateDestination({
-      'id': id,
-      'destination': _destinationController.text,
-      'location': _locationController.text,
-      'description': _descriptionController.text,
-      'imagePath': _image?.path,
-    });
-    _refreshDestinations();
-  }
-
-  void _deleteDestinations(int id) async {
-    await dbHelper.deleteDestination(id);
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Destination deleted')));
-    _refreshDestinations();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -351,7 +374,7 @@ class _DestinationData extends State<DestinationPage> {
           ),
         ),
         title: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 6, 10, 6),
+          padding: const EdgeInsets.fromLTRB(0, 6, 2, 6),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -378,9 +401,12 @@ class _DestinationData extends State<DestinationPage> {
           Container(
             //SearchBar
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            child: TextFormField(
+            child: TextField(
+              controller: _searchController,
+              onSubmitted: (searchTerm) => _searchDestination(searchTerm),
               decoration: InputDecoration(
                   labelText: 'Search Destination',
+                  contentPadding: EdgeInsets.symmetric(horizontal: 24),
                   labelStyle: TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 1), fontSize: 14),
                   enabledBorder: OutlineInputBorder(
@@ -388,15 +414,15 @@ class _DestinationData extends State<DestinationPage> {
                         color: Color.fromRGBO(0, 0, 0, 0.1),
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
+                      borderRadius: BorderRadius.all(Radius.circular(18))),
                   focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: Color.fromRGBO(0, 0, 0, 0.3),
                         width: 2,
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
+                      borderRadius: BorderRadius.all(Radius.circular(18))),
                   suffixIcon: IconButton(
-                    onPressed: () {},
+                    onPressed: () => _searchDestination(_searchController.text),
                     icon: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: SvgPicture.asset(
@@ -408,124 +434,122 @@ class _DestinationData extends State<DestinationPage> {
                   )),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ..._destinations.map((destination) {
-                return Padding(
-                  //Destination Data Cards
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 2, horizontal: 12),
-                  child: Container(
-                    //Card Element
-                    padding: EdgeInsets.all(4),
-                    height: 90,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Color.fromRGBO(0, 0, 0, 0.1),
-                        )),
-                    child: Row(
-                      children: [
-                        ////Left
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Color.fromRGBO(0, 0, 0, 0.1),
-                              )),
-                          width: 80,
-                          height: 80,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: destination['imagePath'] != null
-                                ? Image.file(
-                                    File(destination['imagePath']),
-                                    fit: BoxFit.cover,
-                                  )
-                                : const Icon(Icons.person, size: 50),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ..._destinations.map((destination) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Container(
+                      //Card Element
+                      padding: EdgeInsets.all(4),
+                      height: 90,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Color.fromRGBO(0, 0, 0, 0.1),
+                          )),
+                      child: Row(
+                        children: [
+                          ////Left
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Color.fromRGBO(0, 0, 0, 0.1),
+                                )),
+                            width: 80,
+                            height: 80,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: destination['imagePath'] != null
+                                  ? Image.file(
+                                      File(destination['imagePath']),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const Icon(Icons.person, size: 50),
+                            ),
                           ),
-                        ),
-                        //// Mid
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  destination['destination'],
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Expanded(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 4),
-                                        child: Icon(
-                                          FontAwesomeIcons.locationDot,
-                                          size: 15,
-                                          color:
-                                              Color.fromRGBO(107, 107, 107, 1),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Text(
-                                          destination['location'],
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 11),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 3,
-                                        ),
-                                      )
-                                    ],
+                          //// Mid
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 6),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    destination['destination'],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold, fontSize: 14),
                                   ),
-                                )
-                              ],
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 3, horizontal: 4),
+                                          child: Icon(
+                                            FontAwesomeIcons.locationDot,
+                                            size: 15,
+                                            color: Color.fromRGBO(107, 107, 107, 1),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            destination['location'],
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 11),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 3,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                        ////Right
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () => _showForm(destination['id']),
-                              icon: SvgPicture.asset(
-                                "assets/images/icon-edit.svg",
-                                width: 30,
-                                height: 30,
+                          ////Right
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () => _showForm(destination['id']),
+                                icon: SvgPicture.asset(
+                                  "assets/images/icon-edit.svg",
+                                  width: 30,
+                                  height: 30,
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () =>
-                                  _deleteDestinations(destination['id']),
-                              icon: SvgPicture.asset(
-                                "assets/images/icon-delete.svg",
-                                width: 30,
-                                height: 30,
+                              IconButton(
+                                onPressed: () =>
+                                    _deleteDestinations(destination['id']),
+                                icon: SvgPicture.asset(
+                                  "assets/images/icon-delete.svg",
+                                  width: 30,
+                                  height: 30,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }),
-            ],
+                  );
+                }),
+              ],
+            ),
           )
         ],
       ),
