@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:Travelnation/inputPage/Destination.dart';
+import 'package:Travelnation/main/detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,10 +23,12 @@ class MainTravelNationApp extends StatelessWidget {
       home: MainPage(initialPageIndex: initialPageIndex),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: Color.fromRGBO(64, 151, 232, 1),
-              brightness: Brightness.light)),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Color.fromRGBO(64, 151, 232, 1),
+            brightness: Brightness.light),
+        fontFamily: 'Montserrat',
+      ),
       routes: {
         '/dashboard': (context) => MainPage(initialPageIndex: 0),
         '/profile': (context) => MainPage(initialPageIndex: 1),
@@ -64,11 +67,10 @@ class _MainPageState extends State<MainPage> {
       case 1:
         break;
       case 2:
-        Navigator.pushNamed(context, '/bookmark');
+        Navigator.push(context,MaterialPageRoute(builder: (context) =>BookmarkPage()));
         break;
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,19 +101,44 @@ class _MainPageState extends State<MainPage> {
 }
 
 class BookmarkPage extends StatefulWidget {
-  const BookmarkPage({super.key});
+  BookmarkPage({super.key});
 
   @override
   State<BookmarkPage> createState() => _BookmarkPage();
 }
 
 class _BookmarkPage extends State<BookmarkPage> {
-    bool isPressed = false;
+  bool isPressed = false;
+  final DBHelper dbHelper = DBHelper();
+  List<Map<String, dynamic>> _bookmarks = [];
+  
+  @override
+  void initState() {
+    super.initState();
+    _fetchBookmarks();
+  }
+
+  Future<void> _fetchBookmarks() async {
+    List<Map<String, dynamic>> bookmarkList = await dbHelper.getBookmarks();
+    List<Map<String, dynamic>> destinations = [];
+  
+    // Loop through each bookmark and fetch destination details
+    for (var bookmark in bookmarkList) {
+      Map<String, dynamic>? destination = await dbHelper.getDestinationById(bookmark['destinationId']);
+      if (destination != null) {
+        destinations.add(destination);
+      }
+    }
+
+    setState(() {
+      _bookmarks = destinations;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Color.fromRGBO(20, 80, 140, 1),
         leading: GestureDetector(
           onTap: () {
@@ -120,7 +147,7 @@ class _BookmarkPage extends State<BookmarkPage> {
               MaterialPageRoute(
                   builder: (context) =>
                       MainTravelNationApp(initialPageIndex: 1)),
-            ); // Navigasi kembali ke halaman sebelumnya saat tombol ditekan
+            );
           },
           onTapDown: (_) {
             setState(() {
@@ -140,21 +167,19 @@ class _BookmarkPage extends State<BookmarkPage> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(10, 6, 0, 6),
             child: AnimatedSwitcher(
-              duration: Duration(
-                  milliseconds:
-                      300), // Menggunakan milliseconds untuk animasi yang lebih terlihat
+              duration: Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(opacity: animation, child: child);
               },
               child: isPressed
                   ? SvgPicture.asset(
-                      "assets/images/BackClicked.svg", // SVG yang ditampilkan saat tombol ditekan
+                      "assets/images/BackClicked.svg",
                       key: ValueKey("clicked"),
                       width: 40,
                       height: 40,
                     )
                   : SvgPicture.asset(
-                      "assets/images/Back.svg", // SVG awal
+                      "assets/images/Back.svg",
                       key: ValueKey('default'),
                       height: 40,
                       width: 40,
@@ -185,7 +210,127 @@ class _BookmarkPage extends State<BookmarkPage> {
           ),
         ),
       ),
-
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ..._bookmarks.map((destination) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    height: 90,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Color.fromRGBO(0, 0, 0, 0.1),
+                        )),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Color.fromRGBO(0, 0, 0, 0.1),
+                              )),
+                          width: 80,
+                          height: 80,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: destination['imagePath'] != null
+                                ? Image.file(
+                                    File(destination['imagePath']),
+                                    fit: BoxFit.cover,
+                                  )
+                                : const Icon(Icons.location_city_rounded, size: 50),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  destination['destination'],
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Expanded(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 3, horizontal: 4),
+                                        child: Icon(
+                                          FontAwesomeIcons.locationDot,
+                                          size: 15,
+                                          color: Color.fromRGBO(107, 107, 107, 1),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                          destination['location'],
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 11),
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 3,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailDestinationPage(
+                                        destinationId: destination['id'])),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 14),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: const Color.fromRGBO(64, 151, 232, 1),
+                              ),
+                              child: Text(
+                                "Route",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -268,15 +413,14 @@ class _UserSettings extends State<UserSettings> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Color.fromRGBO(248, 248, 248, 1)),
+                          backgroundColor: MaterialStateProperty.all(
+                              Color.fromRGBO(248, 248, 248, 1)),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                               side: BorderSide(
-                                color: const Color.fromRGBO(0, 0, 0, 0.05),
-                                width: 1.5
-                                ),
+                                  color: const Color.fromRGBO(0, 0, 0, 0.05),
+                                  width: 1.5),
                             ),
                           ),
                         ),
@@ -305,15 +449,14 @@ class _UserSettings extends State<UserSettings> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: ElevatedButton(
                         style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Color.fromRGBO(248, 248, 248, 1)),
+                          backgroundColor: MaterialStateProperty.all(
+                              Color.fromRGBO(248, 248, 248, 1)),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                               side: BorderSide(
-                                color: const Color.fromRGBO(0, 0, 0, 0.05),
-                                width: 1.5
-                                ),
+                                  color: const Color.fromRGBO(0, 0, 0, 0.05),
+                                  width: 1.5),
                             ),
                           ),
                         ),
@@ -598,7 +741,7 @@ class _DashboardPage extends State<DashboardPage> {
                               ),
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 10),
+                                    vertical: 0, horizontal: 6),
                                 child: Container(
                                   width: double.infinity,
                                   height: 60,
@@ -618,48 +761,55 @@ class _DashboardPage extends State<DashboardPage> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                vertical: 4, horizontal: 8),
+                                                vertical: 4, horizontal: 6),
                                             child: Container(
                                               width: 90,
-                                              child: Flexible(
-                                                child: Text(
-                                                  destination['destination'],
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
-                                                ),
+                                              child: Text(
+                                                destination['destination'],
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
                                               ),
                                             ),
                                           ),
-                                          SizedBox(
-                                            height: 12,
-                                          )
+                                          SizedBox(height: 12)
                                         ],
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 6),
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 14),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: const Color.fromRGBO(
-                                                64, 151, 232, 1),
-                                          ),
-                                          child: Text(
-                                            "Route",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white),
+                                        child: InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetailDestinationPage(
+                                                          destinationId:
+                                                              destination[
+                                                                  'id'])),
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 14),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: const Color.fromRGBO(
+                                                  64, 151, 232, 1),
+                                            ),
+                                            child: Text(
+                                              "Route",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -800,22 +950,34 @@ class _DashboardPage extends State<DashboardPage> {
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 6),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 14),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color:
-                                          const Color.fromRGBO(64, 151, 232, 1),
-                                    ),
-                                    child: Text(
-                                      "Route",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DetailDestinationPage(
+                                                    destinationId:
+                                                        destination['id'])),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 10, vertical: 14),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: const Color.fromRGBO(
+                                            64, 151, 232, 1),
+                                      ),
+                                      child: Text(
+                                        "Route",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white),
+                                      ),
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
